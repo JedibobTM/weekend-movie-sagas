@@ -14,6 +14,8 @@ function MovieList() {
 
   const handleSubmit = () => {
     console.log('Handling Submit');
+
+    history.push('/details');
   }
 
   return (
