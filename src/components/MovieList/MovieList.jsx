@@ -7,14 +7,18 @@ function MovieList() {
   const history = useHistory();
   const dispatch = useDispatch();
   const movies = useSelector(store => store.movies);
+  const genres = useSelector(store => store.genres)
 
   useEffect(() => {
     dispatch({ type: 'FETCH_MOVIES' });
   }, []);
 
-  const handleSubmit = () => {
+  const handleSubmit = (movie) => {
     console.log('Handling Submit');
-
+    dispatch({
+      type: 'SELECT_MOVIE',
+      payload: movie
+    })
     history.push('/details');
   }
 
@@ -26,7 +30,7 @@ function MovieList() {
           return (
             <div data-testid='movieItem' key={movie.id}>
               <h3>{movie.title}</h3>
-              <img onClick={handleSubmit} data-tesetid="toDetails" src={movie.poster} alt={movie.title}/>
+              <img onClick={() => handleSubmit(movie)} data-testid="toDetails" src={movie.poster} alt={movie.title}/>
             </div>
           );
         })}
