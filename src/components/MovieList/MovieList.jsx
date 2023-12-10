@@ -19,6 +19,11 @@ function MovieList() {
       type: 'SELECT_MOVIE',
       payload: movie
     })
+    dispatch({
+        type: 'GET_GENRES',
+        payload: movie.id
+    })
+    console.log('Payload:', movie);
     history.push('/details');
   }
 

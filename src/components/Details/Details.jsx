@@ -1,14 +1,13 @@
 import './Details.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 export default function Details() {
 
-    const dispatch = useDispatch();
-
     const movie = useSelector(store => store.selectedMovie);
-    const displayGenre = useSelector(store => store.genres)
     console.log(movie, 'is the selected movie')
+
+    
     return (
         <>
             <h1 data-testid="movieDetails">Details Page</h1>
@@ -19,7 +18,11 @@ export default function Details() {
                 <h1>{movie.title}</h1>
                 <img src={movie.poster}></img>
                 <p>{movie.description}</p>
-                <p>{displayGenre}</p>
+                {movie.genres && movie.genres.map(genre => {
+                    return (
+                        <h3>{genre.name}</h3>
+                    )
+                })}
             </div>
 
             

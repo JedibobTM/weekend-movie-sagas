@@ -13,10 +13,48 @@ router.get('/', (req, res) => {
     })
     .catch(err => {
       console.log('ERROR: Get all movies', err);
-      res.sendStatus(500)
+      res.sendStatus(500);
     })
 
 });
+
+router.get('/:id', (req, res) => {
+  const movieID = req.params.id;
+  const query = `
+    SELECT *
+    FROM "movies"
+    INNER JOIN "movies_genres"
+    ON "movies_genres"."movie_id" = "movies"."id"
+    INNER JOIN "genres"
+    ON "genres"."id" = "movies_genres"."genre_id"
+    WHERE "movies"."id" = $1;
+  `;
+
+  const sqlValues = [movieID];
+  pool.query(query, sqlValues)
+      .then(result => {
+        const firstResult = result.rows[0];
+        console.log(firstResult, 'is the first result')
+        const results = result.rows;
+
+        let movie = {
+          id: firstResult.id,
+          title: firstResult.title,
+          poster: firstResult.poster,
+          description: firstResult.description,
+          genres: []
+        }
+
+        results.map((x) => {
+          movie.genres.push({id: x.genre_id, name: x.name});
+        })
+        console.log("Sending movie result (movie.router):", movie)
+        res.send(movie)
+      }).catch(err => {
+        console.log('ERROR: Join failed:', err);
+        res.sendStatus(500);
+      })
+})
 
 router.post('/', (req, res) => {
   console.log(req.body);

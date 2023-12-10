@@ -7,7 +7,7 @@ import axios from 'axios';
 // Create the rootSaga generator function
 function* rootSaga() {
   yield takeEvery('FETCH_MOVIES', fetchAllMovies);
-  yield takeEvery('SET_GENRES', getMovieGenre);
+  yield takeEvery('GET_GENRES', getMovieGenre);
 }
 
 function* fetchAllMovies() {
@@ -24,10 +24,11 @@ function* fetchAllMovies() {
   }
 }
 
-function* getMovieGenre() {
+function* getMovieGenre(action) {
   try {
-    const genreResponse = yield axios.get(`/api/genres`)
-    yield put ({type: "SET_GENRES", payload: genreResponse.data})
+    console.log('Action payload:', action.payload);
+    const genreResponse = yield axios.get(`/api/movies/${action.payload}`)
+    yield put ({type: "SELECT_MOVIE", payload: genreResponse.data})
   } catch (error) {
     console.log("ERROR with requesting genres:", error);
   }
@@ -48,26 +49,27 @@ const movies = (state = [], action) => {
 
 const selectedMovie = (state = [], action) => {
   if (action.type === 'SELECT_MOVIE') {
+    console.log('Selected movie data:', action.payload)
     return action.payload
   }
   return state;
 }
 
 // Used to store the movie genres
-const genres = (state = [], action) => {
-  switch (action.type) {
-    case 'SET_GENRES':
-      return action.payload;
-    default:
-      return state;
-  }
-}
+// const genres = (state = [], action) => {
+//   switch (action.type) {
+//     case 'SET_GENRES':
+//       return action.payload;
+//     default:
+//       return state;
+//   }
+// }
 
 // Create one store that all components can use
 const storeInstance = createStore(
   combineReducers({
     movies,
-    genres,
+    // genres,
     getMovieGenre,
     selectedMovie
   }),
